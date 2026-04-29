@@ -1,11 +1,13 @@
 # Dockerfile
 # Imagen base oficial de Python
-FROM python:3.11-slim
+FROM python:3.12-slim
 # Evitar archivos .pyc y buffering de stdout
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
+# ---- LÍNEA NUEVA: Instalar el cliente de PostgreSQL ----
+RUN apt-get update && apt-get install -y postgresql-client
 # Copiar e instalar dependencias primero (aprovecha caché de capas)
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
