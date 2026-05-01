@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -60,13 +62,16 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Nuestro context processor personalizado:
+                'envios.context_processors.estadisticas_globales',
             ],
         },
     },
@@ -123,4 +128,38 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
+# Archivos estáticos (CSS, JS, imágenes)
+# URL base para los archivos estaticos
 STATIC_URL = 'static/'
+
+# Carpetas donde Django busca los archivos en DESARROLLO
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',# <- aqui pones tus CSS, JS, imagenes
+]
+# Carpeta donde se juntan todos al hacer collectstatic (PRODUCCION)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Archivos subidos por el usuario (formularios con FileField/ImageField)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# URL a donde redirigir si el usuario no está autenticado
+LOGIN_URL = '/accounts/login/'
+# URL a donde redirigir después de un login exitoso
+LOGIN_REDIRECT_URL = '/'
+# URL a donde redirigir después de logout
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# config/settings.py
+
+
+# Motor de sesiones (base de datos por defecto)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# Expirar cuando el navegador se cierra (False = no expira)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# Tiempo de vida de la sesión en segundos (8 horas = jornada laboral)
+SESSION_COOKIE_AGE = 60 * 60 * 8
+# Solo enviar la cookie por HTTPS (False en desarrollo, True en producción)
+SESSION_COOKIE_SECURE = False 
+# Nombre de la cookie de sesión
+SESSION_COOKIE_NAME = 'encomiendas_session'
